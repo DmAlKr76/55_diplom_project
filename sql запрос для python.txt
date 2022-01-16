@@ -1,0 +1,23 @@
+with data as (
+select 
+    distinct user_id, 
+    resource_id
+from final.carts as c
+    join final.cart_items as i on c.id = i.cart_id
+where state = 'successful' and resource_type = 'Course'
+order by 1),
+
+counter as (
+select 
+    user_id, 
+    count(resource_id) as cc
+from data
+group by user_id)
+  
+select 
+    c.user_id, 
+    d.resource_id
+from counter as c
+    join data as d on c.user_id = d.user_id
+where cc > 1
+order by 1, 2
